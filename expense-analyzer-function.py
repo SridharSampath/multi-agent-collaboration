@@ -18,7 +18,7 @@ def convert_decimals(obj):
 
 def lambda_handler(event, context):
     try:
-        print("🚀 Incoming event from Bedrock:", json.dumps(event, indent=2))
+        print("Event from Bedrock:", json.dumps(event, indent=2))
 
         agent = event.get('agent', 'Unknown Agent')
         actionGroup = event.get('actionGroup', 'Unknown Action Group')
@@ -38,7 +38,7 @@ def lambda_handler(event, context):
 
         if not user_id:
             response_body = {
-                "TEXT": {"body": "❌ Error: Please provide your name to fetch transactions."}
+                "TEXT": {"body": "Error: Please provide your name to fetch transactions."}
             }
         else:
             # Query DynamoDB to fetch all transactions for this user
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
                 KeyConditionExpression=boto3.dynamodb.conditions.Key('user_id').eq(user_id)
             )
             transactions = response.get('Items', [])
-            print("📊 Retrieved transactions:", transactions)
+            print("Retrieved transactions:", transactions)
 
             if not transactions:
                 response_body = {
@@ -67,7 +67,7 @@ def lambda_handler(event, context):
                     for txn in transactions
                 ])
 
-                print("✅ Final formatted transactions response:", formatted_transactions)
+                print("Final formatted transactions response:", formatted_transactions)
 
                 response_body = {
                     "TEXT": {
@@ -79,7 +79,7 @@ def lambda_handler(event, context):
                     }
                 }
 
-        # ✅ Ensure the response follows Bedrock's format
+        # Ensure the response follows Bedrock's format
         function_response = {
             "actionGroup": actionGroup,
             "function": function,
@@ -88,7 +88,7 @@ def lambda_handler(event, context):
             }
         }
 
-        # ✅ Include session attributes (if needed)
+        # Include session attributes (if needed)
         session_attributes = event.get("sessionAttributes", {})
         prompt_session_attributes = event.get("promptSessionAttributes", {})
 
@@ -102,7 +102,7 @@ def lambda_handler(event, context):
         return action_response
 
     except Exception as e:
-        print("❌ Error occurred:", str(e))
+        print("Error occurred:", str(e))
         response_body = {
             "TEXT": {"body": f"Error fetching transactions: {str(e)}"}
         }
